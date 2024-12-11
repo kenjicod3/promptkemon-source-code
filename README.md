@@ -1,7 +1,7 @@
 # promptkemon
 Game Credits:
 
-Developed as part of our first-term project at SUTD.
+Developed as part of our first-term project at SUTD. We were only allowed to use default Python library.
 
 UI Design: 
   Le Minh a.k.a kenjicod3
