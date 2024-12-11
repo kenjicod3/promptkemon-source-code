@@ -79,7 +79,7 @@ def check_heal_failure(user, move, percentage):
         percentage >= 0 and percentage <= 1
     ), "check_heal_failure is taking invalid percentage"
     missing_hp_percent = (user.hp - user.current_hp) / user.hp
-    heal_percent = percentage * move.effect[1]
+    heal_percent = percentage * (move.effect[1]/100)
     return missing_hp_percent <= heal_percent
 
 
@@ -88,6 +88,9 @@ def bot_choose_move(user, target):
     atks, non_atks = split_moves_by_category(user.moveset)
     # Rolls damage for all attacking moves.
     dmg_rolls = {}
+    weight = []
+    for i in non_atks:
+        weight.append(1)
     for move in atks:
         dmg_roll = damage_calculation.calculate_damage(user, target, move)[0]
         dmg_rolls[dmg_roll] = move
@@ -115,23 +118,37 @@ def bot_choose_move(user, target):
         if move.effect[0] == "Status":
             if check_status_failure(target, move)[0]:
                 # (f'Log -- {move.name},is redundant')
-                move_choices.remove(move)
+                weight[non_atks.index(move)]=0
         # Removes stat changing moves if the stat is capped
         elif move.effect[0] == "Stat Change":
             if check_stat_change_failure(move):
                 # (f'Log -- {move.name},is redundant')
-                move_choices.remove(move)
+                weight[non_atks.index(move)]=0
+            else: 
+                if user.current_hp/user.hp <=0.5:
+                    if "multiplier_sp_defense" or "mutiplier_defense" in move.effect:
+                        weight[non_atks.index(move)]+=1
+                elif target.speed > user.speed:
+                    weight[non_atks.index(move)]+=1
         # Removes healing moves that would heal for less than 80% of the heal value
         elif move.effect[0] == "Heal":
             if check_heal_failure(user, move, 0.8):
                 # (f'Log -- {move.name},is redundant')
-                move_choices.remove(move)
+                weight[non_atks.index(move)]=0
+            else:
+                if user.current_hp/user.hp <=0.5:
+                    weight[non_atks.index(move)]+=2
+                elif user.current_hp/user.hp <=0.2:
+                    weight[non_atks.index(move)]+=4
+                else:
+                    weight[non_atks.index(move)]+=1
     # Adds the best attacking move to the move choices list
     move_choices.append(best_atk)
+    weight.append(3)
     # Chooses a random move from the list
     for i in move_choices:
         # ("Log -- Possible Move:",i.name)
-        result = random.choice(move_choices)
+        result = random.choices(move_choices,weights=weight,k=1)[0]
     # (f'Log -- Bot chooses {result}')
     return result
 
