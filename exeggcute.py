@@ -42,12 +42,13 @@ def select_pokemon(var):
     global chosen_pokemon, enemy_pokemon
     chosen_pokemon = var.copy()
     enemy_pokemon = random.choice(pokemon_images)[3].copy()
+    background_label.config(image= random.choices(background, weights=[0,1,1,1], k=1)[0])
     battling_ui()
 
 
 # Hovering texts
-def on_enter(var, event):
-    var.place(x=event.widget.winfo_x() - 90, y=event.widget.winfo_y() - 50)
+def on_enter(var, event, x, y):
+    var.place(x=event.widget.winfo_x() - x, y=event.widget.winfo_y() - y)
 
 
 def on_leave(var, event):
@@ -65,6 +66,7 @@ def clear_widget():
 # Menu function
 def show_menu():
     clear_widget()
+    background_label.config(image=background[0])
     background_label.place(x=0, y=0)
     logo_label.place(x=240, y=50)
     play_button.place(x=515, y=380)
@@ -367,7 +369,32 @@ def update_info():
     moves_box_label.place(x=50, y=530)
     pokemon_images[pokemon_index[chosen_pokemon.name]][1].place(x=300, y=220)
     pokemon_images[pokemon_index[enemy_pokemon.name]][0].place(x=900, y=100)
-    
+    player_description = Label(
+            ui,
+            text=f"Pokemon's name: {chosen_pokemon.name}\n Attack: {chosen_pokemon.attack*chosen_pokemon.multiplier_attack} \n Defense: {chosen_pokemon.defense*chosen_pokemon.multiplier_defense}\nSpeed: {chosen_pokemon.speed*chosen_pokemon.multiplier_speed}\n Special ATK: {chosen_pokemon.sp_attack*chosen_pokemon.multiplier_sp_attack}\n Special DEF: {chosen_pokemon.sp_defense*chosen_pokemon.multiplier_sp_defense} \nType: {chosen_pokemon.pokemon_type[0]}",
+            font=("Comic Sans MS", 15),
+        )
+    enemy_description = Label(
+            ui,
+            text=f"Pokemon's name: {enemy_pokemon.name}\n Attack: {enemy_pokemon.attack*enemy_pokemon.multiplier_attack} \n Defense: {enemy_pokemon.defense*enemy_pokemon.multiplier_defense}\nSpeed: {enemy_pokemon.speed*enemy_pokemon.multiplier_speed}\n Special ATK: {enemy_pokemon.sp_attack*enemy_pokemon.multiplier_sp_attack}\n Special DEF: {enemy_pokemon.sp_defense*enemy_pokemon.multiplier_sp_defense} \nType: {enemy_pokemon.pokemon_type[0]}",
+            font=("Comic Sans MS", 15),
+        )
+    pokemon_images[pokemon_index[chosen_pokemon.name]][1].bind(
+            "<Enter>",
+            lambda event, pokemon_data=player_description: on_enter(pokemon_data, event, 160, -60),
+        )
+    pokemon_images[pokemon_index[chosen_pokemon.name]][1].bind(
+            "<Leave>",
+            lambda event, pokemon_data=player_description: on_leave(pokemon_data, event),
+        )
+    pokemon_images[pokemon_index[enemy_pokemon.name]][0].bind(
+            "<Enter>",
+            lambda event, pokemon_data=enemy_description: on_enter(pokemon_data, event, -270, -50),
+        )
+    pokemon_images[pokemon_index[enemy_pokemon.name]][0].bind(
+            "<Leave>",
+            lambda event, pokemon_data=enemy_description: on_leave(pokemon_data, event),
+        )
     ui.update_idletasks()
     if chosen_pokemon.status == "Null":
         main_status = ""
@@ -437,6 +464,33 @@ def battling_ui():
     moves_box_label.place(x=50, y=530)
     pokemon_images[pokemon_index[chosen_pokemon.name]][1].place(x=300, y=220)
     pokemon_images[pokemon_index[enemy_pokemon.name]][0].place(x=900, y=100)
+    player_description = Label(
+            ui,
+            text=f"Pokemon's name: {chosen_pokemon.name}\n Attack: {chosen_pokemon.attack*chosen_pokemon.multiplier_attack} \n Defense: {chosen_pokemon.defense*chosen_pokemon.multiplier_defense}\nSpeed: {chosen_pokemon.speed*chosen_pokemon.multiplier_speed}\n Special ATK: {chosen_pokemon.sp_attack*chosen_pokemon.multiplier_sp_attack}\n Special DEF: {chosen_pokemon.sp_defense*chosen_pokemon.multiplier_sp_defense} \nType: {chosen_pokemon.pokemon_type[0]}",
+            font=("Comic Sans MS", 15),
+        )
+    enemy_description = Label(
+            ui,
+            text=f"Pokemon's name: {enemy_pokemon.name}\n Attack: {enemy_pokemon.attack*enemy_pokemon.multiplier_attack} \n Defense: {enemy_pokemon.defense*enemy_pokemon.multiplier_defense}\nSpeed: {enemy_pokemon.speed*enemy_pokemon.multiplier_speed}\n Special ATK: {enemy_pokemon.sp_attack*enemy_pokemon.multiplier_sp_attack}\n Special DEF: {enemy_pokemon.sp_defense*enemy_pokemon.multiplier_sp_defense} \nType: {enemy_pokemon.pokemon_type[0]}",
+            font=("Comic Sans MS", 15),
+        )
+    pokemon_images[pokemon_index[chosen_pokemon.name]][1].bind(
+            "<Enter>",
+            lambda event, pokemon_data=player_description: on_enter(pokemon_data, event, 160, -60),
+        )
+    pokemon_images[pokemon_index[chosen_pokemon.name]][1].bind(
+            "<Leave>",
+            lambda event, pokemon_data=player_description: on_leave(pokemon_data, event),
+        )
+    pokemon_images[pokemon_index[enemy_pokemon.name]][0].bind(
+            "<Enter>",
+            lambda event, pokemon_data=enemy_description: on_enter(pokemon_data, event, -270, -50),
+        )
+    pokemon_images[pokemon_index[enemy_pokemon.name]][0].bind(
+            "<Leave>",
+            lambda event, pokemon_data=enemy_description: on_leave(pokemon_data, event),
+        )
+    
     ui.update_idletasks()
     # Move buttons
     move_button_list = []
@@ -462,7 +516,7 @@ def battling_ui():
             "<Enter>",
             lambda event, move_description_tooltip=move_button_description_list[
                 i
-            ]: on_enter(move_description_tooltip, event),
+            ]: on_enter(move_description_tooltip, event, 90, 50),
         )
         move_button_list[i].bind(
             "<Leave>",
@@ -485,8 +539,8 @@ def pokemon_choosing_scene():
 
 
 # Background
-background = PhotoImage(file="images/background.png")
-background_label = Label(ui, image=background)
+background = [PhotoImage(file="images/background.png"), PhotoImage(file="images/background1.png"), PhotoImage(file="images/background2.png"), PhotoImage(file="images/background3.png")]
+background_label = Label(ui, image=background[0])
 
 # Logo
 logo = PhotoImage(file="images/logo.png")
@@ -553,12 +607,25 @@ pikachu_front_label = Label(ui, bg="#cee7f9", image=pikachu_front)
 pikachu_back = PhotoImage(file="images/pikachu_back.png")
 pikachu_back_label = Label(ui, bg="#cee7f9", image=pikachu_back)
 pikachu_button_img = PhotoImage(file="images/pikachu_button.png")
+pikachu_description = Label(
+            ui,
+            text=f"Pokemon's name: {pokemon_data.pikachu.name}\n Attack: {pokemon_data.pikachu.attack} \n Defense: {pokemon_data.pikachu.defense}\nSpeed: {pokemon_data.pikachu.speed}\n Special ATK: {pokemon_data.pikachu.sp_attack}\n Special DEF: {pokemon_data.pikachu.sp_defense} \nType: {pokemon_data.pikachu.pokemon_type[0]}",
+            font=("Comic Sans MS", 15),
+        )
 pikachu_button = Button(
     ui,
     bg="#cee7f9",
     image=pikachu_button_img,
     command=lambda: [select_pokemon(pokemon_data.pikachu)],
 )
+pikachu_button.bind(
+            "<Enter>",
+            lambda event, pokemon_data=pikachu_description: on_enter(pokemon_data, event, 200, -30),
+        )
+pikachu_button.bind(
+            "<Leave>",
+            lambda event, pokemon_data=pikachu_description: on_leave(pokemon_data, event),
+        )
 pokemon_images.append(
     (
         pikachu_front_label,
@@ -574,14 +641,32 @@ phanpy_front_label = Label(ui, bg="#cee7f9", image=phanpy_front)
 phanpy_back = PhotoImage(file="images/phanpy_back.png")
 phanpy_back_label = Label(ui, bg="#cee7f9", image=phanpy_back)
 phanpy_button_img = PhotoImage(file="images/phanpy_button.png")
+phanpy_description = Label(
+            ui,
+            text=f"Pokemon's name: {pokemon_data.phanpy.name}\n Attack: {pokemon_data.phanpy.attack} \n Defense: {pokemon_data.phanpy.defense}\nSpeed: {pokemon_data.phanpy.speed}\n Special ATK: {pokemon_data.phanpy.sp_attack}\n Special DEF: {pokemon_data.phanpy.sp_defense} \nType: {pokemon_data.phanpy.pokemon_type[0]}",
+            font=("Comic Sans MS", 15),
+        )
 phanpy_button = Button(
     ui,
     bg="#cee7f9",
     image=phanpy_button_img,
     command=lambda: [select_pokemon(pokemon_data.phanpy)],
 )
+phanpy_button.bind(
+            "<Enter>",
+            lambda event, pokemon_data=phanpy_description: on_enter(pokemon_data, event, 200, -30),
+        )
+phanpy_button.bind(
+            "<Leave>",
+            lambda event, pokemon_data=phanpy_description: on_leave(pokemon_data, event),
+        )
 pokemon_images.append(
-    (phanpy_front_label, phanpy_back_label, phanpy_button, pokemon_data.phanpy)
+    (
+        phanpy_front_label, 
+        phanpy_back_label, 
+        phanpy_button, 
+        pokemon_data.phanpy
+    )
 )
 pokemon_index["Phanpy"] = 1
 
@@ -590,12 +675,25 @@ treecko_front_label = Label(ui, bg="#cee7f9", image=treecko_front)
 treecko_back = PhotoImage(file="images/treecko_back.png")
 treecko_back_label = Label(ui, bg="#cee7f9", image=treecko_back)
 treecko_button_img = PhotoImage(file="images/treecko_button.png")
+treecko_description = Label(
+            ui,
+            text=f"Pokemon's name: {pokemon_data.treecko.name}\n Attack: {pokemon_data.treecko.attack} \n Defense: {pokemon_data.treecko.defense}\nSpeed: {pokemon_data.treecko.speed}\n Special ATK: {pokemon_data.treecko.sp_attack}\n Special DEF: {pokemon_data.treecko.sp_defense} \nType: {pokemon_data.treecko.pokemon_type[0]}",
+            font=("Comic Sans MS", 15),
+        )
 treecko_button = Button(
     ui,
     bg="#cee7f9",
     image=treecko_button_img,
     command=lambda: [select_pokemon(pokemon_data.treecko)],
 )
+treecko_button.bind(
+            "<Enter>",
+            lambda event, pokemon_data=treecko_description: on_enter(pokemon_data, event, 200, -30),
+        )
+treecko_button.bind(
+            "<Leave>",
+            lambda event, pokemon_data=treecko_description: on_leave(pokemon_data, event),
+        )
 pokemon_images.append(
     (
         treecko_front_label,
@@ -611,12 +709,25 @@ psyduck_front_label = Label(ui, bg="#cee7f9", image=psyduck_front)
 psyduck_back = PhotoImage(file="images/psyduck_back.png")
 psyduck_back_label = Label(ui, bg="#cee7f9", image=psyduck_back)
 psyduck_button_img = PhotoImage(file="images/psyduck_button.png")
+psyduck_description = Label(
+            ui,
+            text=f"Pokemon's name: {pokemon_data.psyduck.name}\n Attack: {pokemon_data.psyduck.attack} \n Defense: {pokemon_data.psyduck.defense}\nSpeed: {pokemon_data.psyduck.speed}\n Special ATK: {pokemon_data.psyduck.sp_attack}\n Special DEF: {pokemon_data.psyduck.sp_defense} \nType: {pokemon_data.psyduck.pokemon_type[0]}",
+            font=("Comic Sans MS", 15),
+        )
 psyduck_button = Button(
     ui,
     bg="#cee7f9",
     image=psyduck_button_img,
     command=lambda: [select_pokemon(pokemon_data.psyduck)],
 )
+psyduck_button.bind(
+            "<Enter>",
+            lambda event, pokemon_data=psyduck_description: on_enter(pokemon_data, event, 200, -30),
+        )
+psyduck_button.bind(
+            "<Leave>",
+            lambda event, pokemon_data=psyduck_description: on_leave(pokemon_data, event),
+        )
 pokemon_images.append(
     (
         psyduck_front_label,
@@ -632,12 +743,25 @@ charmander_front_label = Label(ui, bg="#cee7f9", image=charmander_front)
 charmander_back = PhotoImage(file="images/charmander_back.png")
 charmander_back_label = Label(ui, bg="#cee7f9", image=charmander_back)
 charmander_button_img = PhotoImage(file="images/charmander_button.png")
+charmander_description = Label(
+            ui,
+            text=f"Pokemon's name: {pokemon_data.charmander.name}\n Attack: {pokemon_data.charmander.attack} \n Defense: {pokemon_data.charmander.defense}\nSpeed: {pokemon_data.charmander.speed}\n Special ATK: {pokemon_data.charmander.sp_attack}\n Special DEF: {pokemon_data.charmander.sp_defense} \nType: {pokemon_data.charmander.pokemon_type[0]}",
+            font=("Comic Sans MS", 15),
+        )
 charmander_button = Button(
     ui,
     bg="#cee7f9",
     image=charmander_button_img,
     command=lambda: [select_pokemon(pokemon_data.charmander)],
 )
+charmander_button.bind(
+            "<Enter>",
+            lambda event, pokemon_data=charmander_description: on_enter(pokemon_data, event, 200, -30),
+        )
+charmander_button.bind(
+            "<Leave>",
+            lambda event, pokemon_data=charmander_description: on_leave(pokemon_data, event),
+        )
 pokemon_images.append(
     (
         charmander_front_label,

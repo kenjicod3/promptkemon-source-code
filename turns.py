@@ -9,8 +9,8 @@ def does_move(pokemon):
     # Checks for paralysis
     if pokemon.status == "PAR":
         # If mon is paralysed, roll for paralysis
-        chance = 0.3
-        random_num = random.uniform(0.0, 1.0)
+        chance = 33
+        random_num = random.uniform(0, 100)
         Bool_test = random_num <= chance
         return Bool_test
     # Else, return True
