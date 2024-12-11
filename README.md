@@ -3,7 +3,7 @@ Game Credits:
 
 Developed as part of our first-term project at SUTD. 
 
-We were only allowed to use default Python library.
+We were allowed to use the default Python library only.
 
 UI Design: 
   Le Minh a.k.a kenjicod3
