@@ -266,10 +266,10 @@ def do_move(user, target, move):
                     # Returns appropriate failure message on failure
                     error = bot_algorithm.check_status_failure(target, move)[1]
                     if error == "type immune" or error == "para immune":
-                        display_text = f"It doesn't affect {target.name}..."
+                        display_text = f"It doesn't affect {data.owner(target,chosen_pokemon).lower()} {target.name}..."
                         display_list.append(display_text)
                     else:
-                        display_text = f"{data.owner(user,chosen_pokemon)} {target.name} is already {target.status}!"
+                        display_text = f"{data.owner(target,chosen_pokemon)} {target.name} is already {target.status}!"
                         display_list.append(display_text)
                 # If no failure, apply the status
                 else:
@@ -312,9 +312,9 @@ def battling(player_active, enemy_active):
         target = turn_order[1 - i]
         chosen_move = chosen_moves[i]
         didnt_move_msg = {
-            "PAR": f"{user} is paralyzed!",
-            "SLP": f"{user} is sleeping!",
-            "FRZ": f"{user} is frozen!",
+            "PAR": f"{data.owner(user,chosen_pokemon)} {user} is paralyzed!",
+            "SLP": f"{data.owner(user,chosen_pokemon)} {user} is sleeping!",
+            "FRZ": f"{data.owner(user,chosen_pokemon)} {user} is frozen!",
         }
         # (f'{user} is trying to use {chosen_move} on {target}')
         # If the current mon can move, do the move it chose.
@@ -329,7 +329,7 @@ def battling(player_active, enemy_active):
         # Check for KO.
         if target.current_hp == 0:
             # target's sprite disappears, f'{target} fainted!' is displayed, battle ends
-            display_text = f"{target.name} fainted!"
+            display_text = f"{data.owner(target,chosen_pokemon)} {target.name} fainted!"
             display_list.append(display_text)
             end_list.append(f"{data.owner(user,chosen_pokemon)} {user.name} won!\nThanks for playing!")
             return
@@ -347,7 +347,7 @@ def battling(player_active, enemy_active):
         # Check for KO by burn.
         if mon.current_hp == 0:
             # target's sprite disappears, f'{target} fainted!' is displayed, battle ends
-            display_text = f"{mon.name} fainted!"
+            display_text = f"{data.owner(mon,chosen_pokemon)}{mon.name} fainted!"
             display_list.append(display_text)
             end_list.append(f"{data.owner(enemy,chosen_pokemon)} {enemy.name} won!\nThanks for playing!")
             return
