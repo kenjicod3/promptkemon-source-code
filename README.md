@@ -5,7 +5,7 @@ Developed as part of our first-term project at SUTD.
 
 We were allowed to use the default Python library only.
 
-UI Design: 
+UI Design and fixing bugs: 
   Le Minh a.k.a kenjicod3
   
 Back-End Development: 
