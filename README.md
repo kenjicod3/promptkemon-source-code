@@ -20,3 +20,8 @@ Description:
 This small game project is a great practise for us to improve our coding skills. Thanks everyone in my team for contributing!
 
 Thank you for playing our game!
+
+Contact:
+Minh Le (kenjicod3)
+LinkedIn: https://www.linkedin.com/in/minh-ho%C3%A0ng-l%C3%AA-ab724032a
+GitHub: https://github.com/kenjicod3
